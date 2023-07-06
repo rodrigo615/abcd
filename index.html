@@ -1,0 +1,137 @@
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Encontrar CNSs Válidos</title>
+  <script>
+    function encontrarCNSsValidos1(cns) {
+      var cnssValidos = [];
+
+      for (var i = 0; i < 15; i++) {
+        for (var j = 0; j <= 9; j++) {
+          var cnsArray = cns.split('');
+          cnsArray[i] = j.toString();
+
+          var cnsTeste = cnsArray.join('');
+
+          if (validarCNS(cnsTeste) && !cnssValidos.includes(cnsTeste) && ['7', '8', '9'].includes(cnsTeste.charAt(0))) {
+            cnssValidos.push(cnsTeste);
+          }
+        }
+      }
+
+      return cnssValidos;
+    }
+
+    function encontrarCNSsValidos2(cns) {
+      var cnssValidos = [];
+
+      if (cns.startsWith('7') || cns.startsWith('8') || cns.startsWith('9')) {
+        for (var i = 0; i < 14; i++) {
+          for (var j = 0; j <= 9; j++) {
+            for (var k = 0; k <= 9; k++) {
+              var cnsArray = cns.split('');
+              cnsArray[i] = j.toString();
+              cnsArray[i + 1] = k.toString();
+
+              var cnsTeste = cnsArray.join('');
+
+              if (validarCNS(cnsTeste) || validarCNSProv(cnsTeste)) {
+                cnssValidos.push(cnsTeste);
+              }
+            }
+          }
+        }
+      }
+
+      return cnssValidos.filter(function(cnsValido) {
+        return ['7', '8', '9'].includes(cnsValido.charAt(0));
+      });
+    }
+
+    function validarCNS(cns) {
+      if (cns.trim().length !== 15) {
+        return false;
+      }
+
+      var soma = 0;
+      var peso = 15;
+
+      for (var i = 0; i < 15; i++) {
+        soma += parseInt(cns.charAt(i)) * peso;
+        peso--;
+      }
+
+      var resto = soma % 11;
+
+      if (resto !== 0) {
+        return false;
+      } else {
+        return true;
+      }
+    }
+
+    function validarCNSProv(cns) {
+      if (cns.trim().length != 15) {
+        return false;
+      }
+
+      var soma = 0;
+      for (var i = 0; i < 15; i++) {
+        soma += parseInt(cns.charAt(i)) * (15 - i);
+      }
+
+      var resto = soma % 11;
+
+      return resto == 0;
+    }
+
+    function encontrarCNSs() {
+      var cnsInvalido1 = document.getElementById('cns1').value;
+      var cnsInvalido2 = document.getElementById('cns2').value;
+
+      var cnssValidos1 = encontrarCNSsValidos1(cnsInvalido1);
+      var cnssValidos2 = encontrarCNSsValidos2(cnsInvalido2);
+
+      var resultado1 = document.getElementById('resultado1');
+      resultado1.innerHTML = '';
+
+      if (cnssValidos1.length > 0) {
+        for (var i = 0; i < cnssValidos1.length; i++) {
+          resultado1.innerHTML += cnssValidos1[i] + '<br>';
+        }
+      } else {
+        resultado1.innerHTML = 'Nenhum CNS válido encontrado.';
+      }
+
+      var resultado2 = document.getElementById('resultado2');
+      resultado2.innerHTML = '';
+
+      if (cnssValidos2.length > 0) {
+        for (var i = 0; i < cnssValidos2.length; i++) {
+          resultado2.innerHTML += cnssValidos2[i] + '<br>';
+        }
+      } else {
+        resultado2.innerHTML = 'Nenhum CNS válido encontrado.';
+      }
+    }
+  </script>
+</head>
+<body>
+  <h1>Encontrar CNSs Válidos (1 Dígito Errado)</h1>
+  <label for="cns1">CNS Inválido:</label>
+  <input type="text" id="cns1" placeholder="Digite o CNS inválido">
+  <button onclick="encontrarCNSs()">Verificar</button>
+  <h2>CNSs Válidos:</h2>
+  <div id="resultado1"></div>
+
+  <h1>Encontrar CNSs Válidos (2 Dígitos Errados)</h1>
+  <label for="cns2">CNS Inválido:</label>
+  <input type="text" id="cns2" placeholder="Digite o CNS inválido">
+  <button onclick="encontrarCNSs()">Verificar</button>
+  <h2>CNSs Válidos:</h2>
+  <div id="resultado2"></div>
+</body>
+</html>
